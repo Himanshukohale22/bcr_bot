@@ -10,15 +10,33 @@ def main():
 
     navigator = BasicNavigator()
 
+
+## starting position and orientation of robot 
+
+## initial pose of robot 
+
+#   pose:
+#     position:
+#       x: 0.05105732059858015
+#       y: 0.025322412398853383
+#       z: 0.0
+#     orientation:
+#       x: 0.0
+#       y: 0.0
+#       z: -0.007728561266917568
+#       w: 0.9999701342243895
+
+
     initial_pose = PoseStamped()
     initial_pose.header.frame_id = 'map'
     initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-    initial_pose.pose.position.x = 1.115
-    initial_pose.pose.position.y = -5.910
-    initial_pose.pose.orientation.z = 0.0
-    initial_pose.pose.orientation.w = 0.701
+    initial_pose.pose.position.x = 0.0510573
+    initial_pose.pose.position.y = 0.02532
+    initial_pose.pose.orientation.z = -0.0077
+    initial_pose.pose.orientation.w = 0.9997
+    
     navigator.setInitialPose(initial_pose)
-
+    
     # Activate navigation, if not autostarted. This should be called after setInitialPose()
     # or this will initialize at the origin of the map and update the costmap with bogus readings.
     # If autostart, you should `waitUntilNav2Active()` instead.
@@ -35,32 +53,27 @@ def main():
     # global_costmap = navigator.getGlobalCostmap()
     # local_costmap = navigator.getLocalCostmap()
 
+    ## extracting this pose from ros2 topic echo /waypoints
 
-#   pose:
-#     position:
-#       x: -3.737630844116211
-#       y: 0.17056453227996826
-#       z: 0.0
-#     orientation:
-#       x: 0.0
-#       y: 0.0
-#       z: -0.34705508931286716
-#       w: 0.937844744604371
-
-
-
+    #   pose:
+    #     position:
+    #       x: 1.088379801747891
+    #       y: -5.605996773014956
+    #       z: 0.0
+    #     orientation:
+    #       x: 0.0
+    #       y: 0.0
+    #       z: -0.5397361018485153
+    #       w: 0.8418342713155417
 
     # Go to our demos first goal pose
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = -3.7376
-    goal_pose.pose.position.y = 0.170
-    goal_pose.pose.orientation.w = 0.2
-    goal_pose.pose.orientation.z = 0.93
-
-    # sanity check a valid path exists
-    # path = navigator.getPath(initial_pose, goal_pose)
+    goal_pose.pose.position.x = 1.0883
+    goal_pose.pose.position.y = -5.60599
+    goal_pose.pose.orientation.w = 0.84183
+    goal_pose.pose.orientation.z = 0.-0.53936
 
     navigator.goToPose(goal_pose)
 
