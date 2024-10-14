@@ -73,7 +73,7 @@ def main():
     goal_pose.pose.position.x = 1.0883
     goal_pose.pose.position.y = -5.60599
     goal_pose.pose.orientation.w = 0.84183
-    goal_pose.pose.orientation.z = 0.-0.53936
+    goal_pose.pose.orientation.z = -0.53936
 
 
     ## insert a condition for wait till goal is reached 

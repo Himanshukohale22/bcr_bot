@@ -20,7 +20,7 @@ def generate_launch_description():
     
     
     world_file = LaunchConfiguration("world_file", default = join(bcr_bot_path, 'worlds', 'small_warehouse.sdf'))
-    
+
     # Include the Gazebo launch file
     gazebo_share = get_package_share_directory("gazebo_ros")
     gazebo = IncludeLaunchDescription(
@@ -46,5 +46,6 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('verbose', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value = use_sim_time),
-        gazebo,spawn_bcr_bot_node
+        gazebo,
+        spawn_bcr_bot_node
     ])

@@ -70,8 +70,6 @@ def generate_launch_description():
         ]
     )
 
-
-
     return LaunchDescription([
         # Declare launch arguments
         DeclareLaunchArgument("camera_enabled", default_value = camera_enabled),
