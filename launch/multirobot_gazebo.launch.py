@@ -46,6 +46,8 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('verbose', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value = use_sim_time),
+
         gazebo,
         spawn_bcr_bot_node
+        
     ])

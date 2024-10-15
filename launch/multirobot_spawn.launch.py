@@ -18,24 +18,15 @@ def generate_launch_description():
 
     xacro_path = os.path.join(bcr_bot_path,'urdf','bcr_bot.xacro')
 
-
-    # robot1_position_x = LaunchConfiguration("robot1_position_x")
-    # robto1_position_y = LaunchConfiguration("robot1_position_y")
-    # robot1_orientation_yaw = LaunchConfiguration("robot1_orientation_yaw")
-
-
-    # robot2_position_x = LaunchConfiguration("robot2_position_x")
-    # robto2_position_y = LaunchConfiguration("robot2_position_y")
-    # robot2_orientation_yaw = LaunchConfiguration("robot2_orientation_yaw")
-
-
-    camera_enabled = LaunchConfiguration("camera_enabled", default=True)
-    stereo_camera_enabled = LaunchConfiguration("stereo_camera_enabled", default=False)
-    two_d_lidar_enabled = LaunchConfiguration("two_d_lidar_enabled", default=True)
+    camera_enable = LaunchConfiguration("camera_enable",default=True)
+    stereo_camera_enable = LaunchConfiguration("stereo_camera_enambled",default=True)
+    two_d_lidar_enable = LaunchConfiguration("two_d_lidar",default=True)
     odometry_source = LaunchConfiguration("odometry_source", default="world")
+    robot1_namespace = LaunchConfiguration("robot_namespace",default='bcr_bot1')
+    robot2_namespace = LaunchConfiguration("robot_namespace",default='bcr_bot2')
 
-    
     # Launch the robot_state_publisher node
+
     robot1_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -43,16 +34,17 @@ def generate_launch_description():
         output='screen',
         parameters=[
                     {'robot_description': Command( \
-                    ['xacro ', xacro_path,                   
-                     ' camera_enabled:=', camera_enabled,
-                    ' stereo_camera_enabled:=', stereo_camera_enabled,
-                    ' two_d_lidar_enabled:=', two_d_lidar_enabled,
+                    ['xacro ', xacro_path,
+                     ' camera_enabled:=', camera_enable,
+                    ' stereo_camera_enabled:=', stereo_camera_enable,
+                    ' two_d_lidar_enabled:=', two_d_lidar_enable,
                     ' sim_gazebo:=', "true",
-                    ' odometry_source:=', odometry_source,
-                    ' robot_namespace:=', 'bcr_bot1',
+                    ' odometry_source:=', odometry_source,                  
+                    ' robot_namespace:=', robot1_namespace,
                     ])}],
         remappings=[
-            ('/joint_states', PythonExpression(['"', 'bcr_bot1', '/joint_states"'])),
+            ('/joint_states', PythonExpression(['"',robot1_namespace, '/joint_states"'])),
+
         ]
 
     )
@@ -65,15 +57,15 @@ def generate_launch_description():
         parameters=[
                     {'robot_description': Command( \
                     ['xacro ', xacro_path,
-                    ' camera_enabled:=', camera_enabled,
-                    ' stereo_camera_enabled:=', stereo_camera_enabled,
-                    ' two_d_lidar_enabled:=', two_d_lidar_enabled,
+                     ' camera_enabled:=', camera_enable,
+                    ' stereo_camera_enabled:=', stereo_camera_enable,
+                    ' two_d_lidar_enabled:=', two_d_lidar_enable,
                     ' sim_gazebo:=', "true",
-                    ' odometry_source:=', odometry_source,
-                    ' robot_namespace:=', 'bcr_bot2',
+                    ' odometry_source:=', odometry_source, 
+                    ' robot_namespace:=', robot2_namespace,
                     ])}],
         remappings=[
-            ('/joint_states', PythonExpression(['"', 'bcr_bot2', '/joint_states"'])),
+            ('/joint_states', PythonExpression(['"',robot2_namespace, '/joint_states"'])),
         ]
 
     )
@@ -84,12 +76,12 @@ def generate_launch_description():
         namespace='bcr_bot1',
         output='screen',
         arguments=[
-            '-topic','/bcr_bot1/robot_description',
-            '-entity',PythonExpression(['"', 'bcr_bot1','_robot"']),
-            '-z', "0.0077",
-            '-x', '0.05105',
-            '-y', '0.02532',
-            '-Y', '0.997'
+            '-topic',PythonExpression(['"',robot1_namespace,'/robot_description"']),'/bcr_bot1/robot_description',
+            '-entity',PythonExpression(['"', robot1_namespace,'_robot"']),
+            '-z', "0.0",
+            '-x', '0.1',
+            '-y', '0.5',
+            '-Y', '0.0'
         ]
     )
 
@@ -99,21 +91,21 @@ def generate_launch_description():
         namespace='bcr_bot2',
         output='screen',
         arguments=[
-            '-topic','/bcr_bot2/robot_description',
-            '-entity',PythonExpression(['"', 'bcr_bot2','_robot"']),
-            '-z', "-0.0539",
-            '-x', '1.0883',
-            '-y', '-5.605',
-            '-Y', '-0.5393'
+            '-topic',PythonExpression(['"',robot2_namespace,'/robot_description"']),'/bcr_bot1/robot_description',
+            '-entity',PythonExpression(['"', robot2_namespace,'_robot"']),
+            '-z', "0.0",
+            '-x', '0.1',
+            '-y', '-0.9',
+            '-Y', '0.0'
         ]
     )
 
     return LaunchDescription([
-        
-    #     DeclareLaunchArgument("camera_enabled", default_value = camera_enabled),
-    #     DeclareLaunchArgument("stereo_camera_enabled", default_value = stereo_camera_enabled),
-    #     DeclareLaunchArgument("two_d_lidar_enabled", default_value = two_d_lidar_enabled),
-    #     DeclareLaunchArgument("odometry_source", default_value = odometry_source),
+
+        DeclareLaunchArgument("camera_enabled", default_value = camera_enable),
+        DeclareLaunchArgument("stereo_camera_enabled", default_value = stereo_camera_enable),
+        DeclareLaunchArgument("two_d_lidar_enabled", default_value = two_d_lidar_enable),
+        DeclareLaunchArgument("odometry_source", default_value = odometry_source),
 
         robot1_state_publisher,
         robot2_state_publisher,
