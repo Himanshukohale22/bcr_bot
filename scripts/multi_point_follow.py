@@ -10,22 +10,7 @@ def main():
 
     navigator = BasicNavigator()
 
-
-## starting position and orientation of robot 
-
-## initial pose of robot 
-
-#   pose:
-#     position:
-#       x: 0.05105732059858015
-#       y: 0.025322412398853383
-#       z: 0.0
-#     orientation:
-#       x: 0.0
-#       y: 0.0
-#       z: -0.007728561266917568
-#       w: 0.9999701342243895
-
+    ## starting position and orientation of robot 
 
     initial_pose = PoseStamped()
     initial_pose.header.frame_id = 'map'
@@ -55,46 +40,22 @@ def main():
 
     ## extracting this pose from ros2 topic echo /waypoints
 
-    #   pose:
-    #     position:
-    #       x: 1.088379801747891
-    #       y: -5.605996773014956
-    #       z: 0.0
-    #     orientation:
-    #       x: 0.0
-    #       y: 0.0
-    #       z: -0.5397361018485153
-    #       w: 0.8418342713155417
+    ## Defining a list of goals 
+    goal_pose = []
 
-    # Go to our demos first goal pose
-    goal_pose = PoseStamped()
-    goal_pose.header.frame_id = 'map'
-    goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 1.0883
-    goal_pose.pose.position.y = -5.60599
-    goal_pose.pose.orientation.w = 0.84183
-    goal_pose.pose.orientation.z = -0.53936
+    # first goal 
+     
+    goal_pose0 = PoseStamped()
+    goal_pose0.header.frame_id = 'map'
+    goal_pose0.header.stamp = navigator.get_clock().now().to_msg()
+    goal_pose0.pose.position.x = 1.0883
+    goal_pose0.pose.position.y = -5.60599
+    goal_pose0.pose.orientation.w = 0.84183
+    goal_pose0.pose.orientation.z = -0.53936
+    
+    goal_pose.append(goal_pose0)
 
-
-    ## insert a condition for wait till goal is reached 
-
-
-
-    # sanity check a valid path exists
-    # path = navigator.getPath(initial_pose, goal_pose)
-
-    #       pose:
-    #     position:
-    #       x: 1.6543943881988525
-    #       y: -7.895281791687012
-    #       z: 0.2
-    #     orientation:
-    #       x: 0.0
-    #       y: 0.0
-    #       z: -0.7161132324937167
-    #       w: 0.6979841246385193
-    #   scale:
-
+    # 2nd goal
 
     goal_pose1 = PoseStamped()
     goal_pose1.header.frame_id = 'map'
@@ -104,20 +65,9 @@ def main():
     goal_pose1.pose.orientation.z = 0.0 
     goal_pose1.pose.orientation.w = 0.0 
 
+    goal_pose.append(goal_pose1)
 
-    ## insert a condition for wait till goal is reached 
-
-    #   pose:
-    # position:
-    #   x: -4.376722812652588
-    #   y: -3.2796342372894287
-    #   z: 0.0
-    # orientation:
-    #   x: 0.0
-    #   y: 0.0
-    #   z: -0.015840582932375228
-    #   w: 0.9998745300948327
-
+    # 3rd goal
 
     goal_pose2 = PoseStamped()
     goal_pose2.header.frame_id = 'map'
@@ -127,22 +77,9 @@ def main():
     goal_pose2.pose.orientation.z = -0.01584
     goal_pose2.pose.orientation.w = 0.9998
 
+    goal_pose.append(goal_pose2)
 
-    ## insert a condition for wait till goal is reached 
-
-
-#   pose:
-#     position:
-#       x: -4.376722812652588
-#       y: -3.2796342372894287
-#       z: 0.0
-#     orientation:
-#       x: 0.0
-#       y: 0.0
-#       z: -0.015840582932375228
-#       w: 0.9998745300948327
-
-
+    # 4rth goal
 
     goal_pose3 = PoseStamped()
     goal_pose3.header.frame_id = 'map'
@@ -152,55 +89,28 @@ def main():
     goal_pose3.pose.orientation.z = -0.01584
     goal_pose3.pose.orientation.w = 0.9998
 
+    goal_pose.append(goal_pose3)
 
-    ## insert a condition for wait till goal is reached 
+    # navigate to each goal 
 
     navigator.goToPose(goal_pose)
-    navigator.goToPose(goal_pose1)
-    navigator.goToPose(goal_pose2)
-    navigator.goToPose(goal_pose3)
 
-    i = 0
-    while not navigator.isTaskComplete():
-        ################################################
-        #
-        # Implement some code here for your application!
-        #
-        ################################################
+    for goal in goal_pose:
+        navigator.goToPose(goal)
 
-        # Do something with the feedback
-        i = i + 1
-        feedback = navigator.getFeedback()
-        if feedback and i % 5 == 0:
-            print(
-                'Estimated time of arrival: '
-                + '{0:.0f}'.format(
-                    Duration.from_msg(feedback.estimated_time_remaining).nanoseconds
-                    / 1e9
-                )
-                + ' seconds.'
-            )
+        while not navigator.isTaskComplete():
+            feedback = navigator.getFeedback()
+        if feedback:
+            print(f"Distance to goal: {feedback.distance_remaining:.2f} meters")
 
-            # Some navigation timeout to demo cancellation
-            if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600.0):
-                navigator.cancelTask()
-
-            # Some navigation request change to demo preemption
-            if Duration.from_msg(feedback.navigation_time) > Duration(seconds=18.0):
-                goal_pose.pose.position.x = 0.0
-                goal_pose.pose.position.y = 0.0
-                navigator.goToPose(goal_pose)
-
-    # Do something depending on the return code
+    # Check result
     result = navigator.getResult()
-    if result == TaskResult.SUCCEEDED:
-        print('Goal succeeded!')
-    elif result == TaskResult.CANCELED:
-        print('Goal was canceled!')
-    elif result == TaskResult.FAILED:
-        print('Goal failed!')
+    if result == navigator.NavigationResult.SUCCEEDED:
+        print("Reached the goal!")
     else:
-        print('Goal has an invalid return status!')
+        print("Failed to reach the goal!")
+
+    print("All goals have been processed.")
 
     navigator.lifecycleShutdown()
 
@@ -209,9 +119,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-# update in this code to do 
-# 1. to insert the feeback 
-# 2. to set the condition that if goal is reached then only go to other goal 
+    
