@@ -15,25 +15,13 @@ def main():
 
 ## initial pose of robot 
 
-#   pose:
-#     position:
-#       x: 0.05105732059858015
-#       y: 0.025322412398853383
-#       z: 0.0
-#     orientation:
-#       x: 0.0
-#       y: 0.0
-#       z: -0.007728561266917568
-#       w: 0.9999701342243895
-
-
     initial_pose = PoseStamped()
     initial_pose.header.frame_id = 'map'
     initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-    initial_pose.pose.position.x = 0.0510573
-    initial_pose.pose.position.y = 0.02532
-    initial_pose.pose.orientation.z = -0.0077
-    initial_pose.pose.orientation.w = 0.9997
+    initial_pose.pose.position.x = 0.03779
+    initial_pose.pose.position.y = -0.031500
+    initial_pose.pose.orientation.z = -1.8478
+    initial_pose.pose.orientation.w = 0.999
     
     navigator.setInitialPose(initial_pose)
     
@@ -55,25 +43,15 @@ def main():
 
     ## extracting this pose from ros2 topic echo /waypoints
 
-    #   pose:
-    #     position:
-    #       x: 1.088379801747891
-    #       y: -5.605996773014956
-    #       z: 0.0
-    #     orientation:
-    #       x: 0.0
-    #       y: 0.0
-    #       z: -0.5397361018485153
-    #       w: 0.8418342713155417
-
     # Go to our demos first goal pose
+    
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 1.0883
-    goal_pose.pose.position.y = -5.60599
-    goal_pose.pose.orientation.w = 0.84183
-    goal_pose.pose.orientation.z = 0.-0.53936
+    goal_pose.pose.position.x = 0.98277
+    goal_pose.pose.position.y = -5.4242
+    goal_pose.pose.orientation.w = 0.7071
+    goal_pose.pose.orientation.z = -0.7071
 
     navigator.goToPose(goal_pose)
 
@@ -103,7 +81,7 @@ def main():
                 navigator.cancelTask()
 
             # Some navigation request change to demo preemption
-            if Duration.from_msg(feedback.navigation_time) > Duration(seconds=18.0):
+            if Duration.from_msg(feedback.navigation_time) > Duration(seconds=30.0):
                 goal_pose.pose.position.x = 0.0
                 goal_pose.pose.position.y = 0.0
                 navigator.goToPose(goal_pose)
