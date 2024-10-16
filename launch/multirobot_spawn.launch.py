@@ -3,7 +3,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, AppendEnvironmentVariable, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.actions import Node
 import xacro
 
@@ -22,15 +22,15 @@ def generate_launch_description():
     stereo_camera_enable = LaunchConfiguration("stereo_camera_enambled",default=True)
     two_d_lidar_enable = LaunchConfiguration("two_d_lidar",default=True)
     odometry_source = LaunchConfiguration("odometry_source", default="world")
-    robot1_namespace = LaunchConfiguration("robot_namespace",default='bcr_bot1')
-    robot2_namespace = LaunchConfiguration("robot_namespace",default='bcr_bot2')
+    robot1_namespace = LaunchConfiguration("robot1_namespace",default='bcr_bot1')
+    robot2_namespace = LaunchConfiguration("robot1_namespace",default='bcr_bot2')
 
     # Launch the robot_state_publisher node
 
     robot1_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace='bcr_bot1',
+        namespace=robot1_namespace,
         output='screen',
         parameters=[
                     {'robot_description': Command( \
@@ -43,8 +43,7 @@ def generate_launch_description():
                     ' robot_namespace:=', robot1_namespace,
                     ])}],
         remappings=[
-            ('/joint_states', PythonExpression(['"',robot1_namespace, '/joint_states"'])),
-
+            ('/joint_states', 'bcr_bot1/joint_states')
         ]
 
     )
@@ -52,7 +51,7 @@ def generate_launch_description():
     robot2_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        namespace='bcr_bot2',
+        namespace=robot2_namespace,
         output='screen',
         parameters=[
                     {'robot_description': Command( \
@@ -65,7 +64,7 @@ def generate_launch_description():
                     ' robot_namespace:=', robot2_namespace,
                     ])}],
         remappings=[
-            ('/joint_states', PythonExpression(['"',robot2_namespace, '/joint_states"'])),
+            ('/joint_states', 'bcr_bot2/joint_states')
         ]
 
     )
@@ -73,13 +72,13 @@ def generate_launch_description():
     robot1_spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        namespace='bcr_bot1',
+        namespace=robot1_namespace,
         output='screen',
         arguments=[
-            '-topic',PythonExpression(['"',robot1_namespace,'/robot_description"']),'/bcr_bot1/robot_description',
-            '-entity',PythonExpression(['"', robot1_namespace,'_robot"']),
+            '-topic','/bcr_bot1/robot_description',
+            '-entity',f'/{robot2_namespace}/robot_description',
             '-z', "0.0",
-            '-x', '0.1',
+            '-x', '0.0',
             '-y', '0.5',
             '-Y', '0.0'
         ]
@@ -88,13 +87,13 @@ def generate_launch_description():
     robot2_spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        namespace='bcr_bot2',
+        namespace=robot2_namespace,
         output='screen',
         arguments=[
-            '-topic',PythonExpression(['"',robot2_namespace,'/robot_description"']),'/bcr_bot1/robot_description',
-            '-entity',PythonExpression(['"', robot2_namespace,'_robot"']),
+            '-topic','/bcr_bot2/robot_description',
+            '-entity', f'/{robot2_namespace}/robot_description',
             '-z', "0.0",
-            '-x', '0.1',
+            '-x', '0.0',
             '-y', '-0.9',
             '-Y', '0.0'
         ]
@@ -108,8 +107,8 @@ def generate_launch_description():
         DeclareLaunchArgument("odometry_source", default_value = odometry_source),
 
         robot1_state_publisher,
-        robot2_state_publisher,
         robot1_spawn_entity,
+        robot2_state_publisher,
         robot2_spawn_entity
 
     ])
