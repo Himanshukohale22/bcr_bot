@@ -20,6 +20,10 @@ install(PROGRAMS scripts/point_follow.py
         DESTINATION lib/${PROJECT_NAME})
 
 
+install(PROGRAMS scripts/multi_point_follow.py
+DESTINATION lib/${PROJECT_NAME})
+
+
 ament_package()
 
 
