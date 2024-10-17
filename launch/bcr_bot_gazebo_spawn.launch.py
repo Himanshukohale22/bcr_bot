@@ -63,7 +63,7 @@ def generate_launch_description():
         arguments=[
             '-topic', "/robot_description",
             '-entity', PythonExpression(['"', robot_namespace, '_robot"']), #default enitity name _bcr_bot
-            '-z', "0.28",
+            '-z', "0.0",
             '-x', position_x,
             '-y', position_y,
             '-Y', orientation_yaw

@@ -14,13 +14,11 @@ install( DIRECTORY config/
          
 install(PROGRAMS scripts/remapper.py
         DESTINATION lib/${PROJECT_NAME})
-
-
 install(PROGRAMS scripts/point_follow.py
         DESTINATION lib/${PROJECT_NAME})
-
-
 install(PROGRAMS scripts/multi_point_follow.py
+DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/circle.py
 DESTINATION lib/${PROJECT_NAME})
 
 

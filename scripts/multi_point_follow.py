@@ -67,7 +67,6 @@ def main():
 
     # Navigate to each goal individually
     for goal in goal_pose:
-        
         navigator.goToPose(goal)
 
         # Monitor the navigation progress
