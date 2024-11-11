@@ -54,6 +54,9 @@
 
     <xacro:include filename="$(find bcr_bot)/urdf/materials.xacro"/>
     <xacro:include filename="$(find bcr_bot)/urdf/macros.xacro"/>
+    <xacro:include filename="$(find bcr_bot)/urdf/ultrasonic_sensor.xacro"/>
+
+    <!-- <xacro:include filename="$(find bcr_bot)/urdf/plannogram.xacro"/> -->
 
     <xacro:if value="$(arg sim_gazebo)">
         <xacro:include filename="$(find bcr_bot)/urdf/gazebo.xacro"/>
@@ -282,6 +285,79 @@
         <child link="roof_link"/>
         <origin xyz="0 0 0.16" rpy="0 0 0" />
     </joint>
+
+    <!--.............................. plannogram standie............................... -->
+
+    <link name="standie_link">
+        <visual>
+            <geometry>
+                <box size="0.35 0.08 1.5" />
+            </geometry> 
+            <material name="LightGrey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="1.0 1.0 1.0" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.0"/>
+            <origin xyz="0.0 0.0 1" rpy="0.0 0.0 0.0"/>
+            <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+        </inertial>
+    </link>
+
+    <joint name="standi_joint" type="fixed">
+        <parent link="roof_link"/>
+        <child link="standie_link"/>
+        <origin xyz="0 0 0.7" rpy="0 0 1.57"/>
+        <axis xyz="0 0 0"/>
+    </joint>
+
+    <!-- .............................camera's.......................................... -->
+
+    <!-- STEREO CAMERA -->
+
+    <link name="standie_camera">
+
+        <collision>
+            <origin xyz="0.175 0 0.5" rpy="0 0 0" />
+            <geometry>
+                <box size="0.07 0.3 0.09"/>
+            </geometry>
+        </collision>
+
+        <visual>
+            <origin xyz="0.175 0 0.5" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find bcr_bot)/meshes/kinect/d415.dae"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+
+        <inertial>
+            <mass value="0.01"/>
+            <xacro:box_inertia m="0.01" x="0.07" y="0.3" z = "0.09"/>
+        </inertial>
+
+    </link>
+
+    <joint name="standie_camera_joint" type="fixed">
+        <origin rpy="0 0 1.57" xyz="0 0 0.5"/>
+        <parent link="base_link"/>
+        <child link="standie_camera"/>
+    </joint>
+
+    <!-- <link name="stereo_camera_optical"/>
+
+    <joint name="stereo_camera_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <parent link="stereo_camera"/>
+        <child link="stereo_camera_optical"/>
+    </joint> -->
+
 
     <!-- ............................. CONVEYOR ........................................ -->
 
