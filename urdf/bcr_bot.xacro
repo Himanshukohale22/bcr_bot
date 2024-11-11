@@ -54,9 +54,6 @@
 
     <xacro:include filename="$(find bcr_bot)/urdf/materials.xacro"/>
     <xacro:include filename="$(find bcr_bot)/urdf/macros.xacro"/>
-    <xacro:include filename="$(find bcr_bot)/urdf/ultrasonic_sensor.xacro"/>
-
-    <!-- <xacro:include filename="$(find bcr_bot)/urdf/plannogram.xacro"/> -->
 
     <xacro:if value="$(arg sim_gazebo)">
         <xacro:include filename="$(find bcr_bot)/urdf/gazebo.xacro"/>

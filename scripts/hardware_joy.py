@@ -6,6 +6,8 @@ from std_msgs.msg import Int32, Float32
 from geometry_msgs.msg import Twist
 import serial
 import struct
+from sensor_msgs.msg import Range
+
 
 struct_format = 'iiiiii'
 min_distance = 0.2
@@ -54,6 +56,9 @@ class SerialReader(Node):
         self.publisher_joystick2_x = self.create_publisher(Int32,'S4_joystick2_xaxis',10)
         self.publisher_joystick2_y = self.create_publisher(Int32,'S4_joystick2_yaxis',10)
         self.publisher_cmdvel = self.create_publisher(Twist,'cmd_vel',10)
+        self.publisher_ultrasonic = self.create_publisher(Range,'ultrasonic',10)
+        
+        
 
         self.ser = serial.Serial("/dev/ttyUSB0", 115200)
         self.timer = self.create_timer(1, self.read_serial_data)
@@ -70,6 +75,19 @@ class SerialReader(Node):
 
             
             msg_distance = Float32()
+
+            #########################################ultrasonic######################33
+
+            distance_ultrasonic = Range()
+ 
+            distance_ultrasonic.header.stamp = self.get_clock().now().to_msg()
+            distance_ultrasonic.header.frame_id = 'map'
+            distance_ultrasonic.radiation_type = Range.ULTRASOUND
+            distance_ultrasonic.field_of_view = 0.2618
+            distance_ultrasonic.min_range = 0.0
+            distance_ultrasonic.max_range = 4.0
+            distance_ultrasonic.range = float(distance)/ 100.0
+            
             msg_button = Int32()
             msg_joystick1_x = Int32()  
             msg_joystick1_y = Int32()  
@@ -93,7 +111,6 @@ class SerialReader(Node):
             self.publisher_button.publish(msg_button)
 
             
-            
             # self.get_logger().info(f'Published Button: {msg_button.data}')
             if msg_button.data != prev_button :
 
@@ -114,8 +131,6 @@ class SerialReader(Node):
                     latch = 0
                     count = 0
                     print("Removed from breaks")
-
-                
 
             elif msg_distance.data <= min_distance and latch == 0:
                 move.linear.x = 0.0
@@ -173,6 +188,8 @@ class SerialReader(Node):
             prev_button = msg_button.data
 
             self.publisher_cmdvel.publish(move)
+            self.publisher_ultrasonic.publish(distance_ultrasonic)
+            
 
 def main(args=None):
     rclpy.init(args=args)

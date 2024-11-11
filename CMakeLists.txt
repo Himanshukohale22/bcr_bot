@@ -25,6 +25,10 @@ install(PROGRAMS scripts/circle.py
         DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/hardware_joy.py
         DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/ultrasonic_sensor.py
+        DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/bt_nav_obj.py
+        DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
 

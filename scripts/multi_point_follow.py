@@ -97,6 +97,8 @@ def main():
         else:
             print("Unknown result received!")
 
+        
+
     # Shutdown navigation lifecycle once done
     navigator.lifecycleShutdown()
     exit(0)
